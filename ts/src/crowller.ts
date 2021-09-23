@@ -1,9 +1,9 @@
 import superagent from 'superagent';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 interface Crowller {
     getSpecficDOM(dom: string):void;
-    _getRawHtml(url: string):string;
+    _getRawHtml(url: string):Promise<string>;
 }
 
 class Community implements Crowller{
@@ -14,13 +14,13 @@ class Community implements Crowller{
     }
 
     getSpecficDOM(dom:string){
-        const t = this._getRawHtml(this.url);
-        const $ = cheerio.load(t);
-        const jobItems = $(dom);
-        jobItems.map((index, element)=>{
-            const companyName = $(element).find('span').text();
-            console.log(companyName)
-        })
+        this._getRawHtml(this.url).then((html) =>{
+            const $ = cheerio.load(html);
+            console.log(html);
+            $('td','.topic-list-item').each((i, elem)=>{
+                console.log("aaa");
+            })
+        });
     }
 
     async _getRawHtml(url:string) {
@@ -29,5 +29,5 @@ class Community implements Crowller{
     }
 }
 
-const a = new Community("https://qiita.com/Syoitu/items/6a136e3b8d2fb65e51a2");
+const a = new Community("https://ja.community.nulab.com/c/backlog/11");
 a.getSpecficDOM('.topic-list-item');
