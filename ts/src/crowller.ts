@@ -2,11 +2,11 @@ import superagent from 'superagent';
 import * as cheerio from 'cheerio';
 
 interface Crowller {
-    getSpecificDOM(dom:string, attr: string):void;
+    getSpecificDOM(dom:string, attr: string):Promise<void|string[]>;
     _getRawHtml(url: string):Promise<string>;
 }
 
-class Website implements Crowller{
+export class Website implements Crowller{
     private url:string;
 
     constructor(url:string){
@@ -14,24 +14,26 @@ class Website implements Crowller{
     }
 
     getSpecificDOM(dom:string, attr:string){
-        this._getRawHtml(this.url).then((html) =>{
+        let dom_array: Array<string> = new Array;
+        const v = this._getRawHtml(this.url).then((html) =>{
             let $ = cheerio.load(html);
             $("body").each((i, elem) => {
                 $ = cheerio.load($(elem).text());
                 $(dom, attr).each((i, v)=>{
                     let t = $(v).first().text();
-                    console.log(t);
+                    dom_array.push(t);
                 });
             });
-        });
+            return dom_array;
+        }).catch((error =>{
+            console.error(error);
+        }));
+        return v;
     }
 
     async _getRawHtml(url:string) {
         const result = await superagent.get(url);
+        // Promiseオブジェクトが返る
         return result.text;
     }
 }
-
-const target_url = process.env.TARGET_URL || 'localhost';
-const com = new Website(target_url);
-com.getSpecificDOM("a", ".link-top-line");
