@@ -2,23 +2,23 @@ import superagent from 'superagent';
 import * as cheerio from 'cheerio';
 
 interface Crowller {
-    getSpecficDOM():void;
+    getSpecificDOM(dom:string, attr: string):void;
     _getRawHtml(url: string):Promise<string>;
 }
 
-class Community implements Crowller{
+class Website implements Crowller{
     private url:string;
 
     constructor(url:string){
         this.url = url;
     }
 
-    getSpecficDOM(){
+    getSpecificDOM(dom:string, attr:string){
         this._getRawHtml(this.url).then((html) =>{
             let $ = cheerio.load(html);
             $("body").each((i, elem) => {
                 $ = cheerio.load($(elem).text());
-                $('a','.link-top-line').each((i, v)=>{
+                $(dom, attr).each((i, v)=>{
                     let t = $(v).first().text();
                     console.log(t);
                 });
@@ -32,6 +32,6 @@ class Community implements Crowller{
     }
 }
 
-const target_url = process.env.MYAPP_URL || 'localhost';
-const a = new Community(target_url);
-a.getSpecficDOM();
+const target_url = process.env.TARGET_URL || 'localhost';
+const com = new Website(target_url);
+com.getSpecificDOM("a", ".link-top-line");
