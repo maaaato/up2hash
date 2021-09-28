@@ -1,4 +1,4 @@
-import {Website} from './crowller';
+import {Website} from './website';
 import {HashManager} from './hash';
 
 const target_url = process.env.TARGET_URL || 'localhost';

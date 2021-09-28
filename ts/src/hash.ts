@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import fs from "fs";
 
-const filename:string = "crowller_hash_result.txt";
+const filename:string = "website_hash_result.txt";
 
 /* 
 hashのアルゴリズム毎にhash化する

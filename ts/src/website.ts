@@ -1,12 +1,12 @@
 import superagent from 'superagent';
 import * as cheerio from 'cheerio';
 
-interface Crowller {
+interface IWebsite {
     getSpecificDOM(dom:string, attr: string):Promise<void|string[]>;
     _getRawHtml(url: string):Promise<string>;
 }
 
-export class Website implements Crowller{
+export class Website implements IWebsite{
     private url:string;
 
     constructor(url:string){
