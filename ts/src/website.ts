@@ -2,7 +2,7 @@ import superagent from 'superagent';
 import * as cheerio from 'cheerio';
 
 interface IWebsite {
-    getSpecificDOM(dom:string, attr: string):Promise<void|string[]>;
+    getSpecificDOM(dom:string, attr: string):Promise<unknown>;
     _getRawHtml(url: string):Promise<string>;
 }
 
@@ -15,20 +15,20 @@ export class Website implements IWebsite{
 
     getSpecificDOM(dom:string, attr:string){
         let dom_array: Array<string> = new Array;
-        const v = this._getRawHtml(this.url).then((html) =>{
-            let $ = cheerio.load(html);
-            $("body").each((i, elem) => {
-                $ = cheerio.load($(elem).text());
-                $(dom, attr).each((i, v)=>{
-                    let t = $(v).first().text();
-                    dom_array.push(t);
+        return new Promise<string[]>((resolve, reject) => {
+            const html = this._getRawHtml(this.url);
+            html.then((elem) => {
+                let $ = cheerio.load(elem);
+                $("body").each((i, elem) => {
+                    $ = cheerio.load($(elem).text());
+                    $(dom, attr).each((i, v)=>{
+                        let t = $(v).first().text();
+                        dom_array.push(t);
+                    });
                 });
+                resolve(dom_array);
             });
-            return dom_array;
-        }).catch((error =>{
-            console.error(error);
-        }));
-        return v;
+        });
     }
 
     async _getRawHtml(url:string) {
