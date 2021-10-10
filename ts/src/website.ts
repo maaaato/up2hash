@@ -2,7 +2,7 @@ import superagent from 'superagent';
 import * as cheerio from 'cheerio';
 
 interface IWebsite {
-    getSpecificDOM(dom:string, attr: string):Promise<unknown>;
+    getSpecificDOM(dom:string, attr: string):Promise<string[]>;
     _getRawHtml(url: string):Promise<string>;
 }
 
@@ -27,6 +27,8 @@ export class Website implements IWebsite{
                     });
                 });
                 resolve(dom_array);
+            },(error) =>{
+                reject(new Error(error));
             });
         });
     }
